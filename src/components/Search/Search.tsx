@@ -9,7 +9,7 @@ const Search = forwardRef<HTMLInputElement, SearchProps>(function Input({ classN
 			<input ref={ref} className={cn(styles['input'], className, {
 				[styles['invalid']]: !isValid
 			})} {...props} />
-			<img className={styles['icon']} src="/search.svg" alt="Поиск" />
+			<img className={styles['icon']} src="/All/search.svg" alt="Поиск" />
 		</div>
 	);
 });
