@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import Heading from "../../components/Heading/Heading";
 import Search from "../../components/Search/Search";
 import { PREFIX } from "../../helpers/API";
@@ -11,8 +11,13 @@ export function Menu() {
 	const [products, setProducts] = useState<Product[]>([])
 	const [isLoading, setIsLoading] = useState<boolean>(false)
 	const [error, setError] = useState<string | undefined>()
+	const [filter, setFilter] = useState<string>();
 
-	const getMenu = async () => {
+	useEffect(() => {
+		getMenu(filter)
+	}, [filter])
+
+	const getMenu = async (name?: string) => {
 		try {
 			setIsLoading(true)
 			await new Promise<void>((resolve) => {
@@ -20,7 +25,11 @@ export function Menu() {
 					resolve()
 				}, 1500)
 			})
-			const { data } = await axios.get<Product[]>(`${PREFIX}/products`)
+			const { data } = await axios.get<Product[]>(`${PREFIX}/products`, {
+				params: {
+					name
+				}
+			})
 			setProducts(data)
 			setIsLoading(false)
 		} catch (e) {
@@ -33,22 +42,27 @@ export function Menu() {
 		}
 	};
 
-	useEffect(() => {
-		getMenu()
-	}, [])
+	const updateFilter = (e: ChangeEvent<HTMLInputElement>) => {
+		setFilter(e.target.value);
+	}
 
-	return <>
-		<div className={styles['head']}>
-			<Heading>Меню</Heading>
-			<Search placeholder="Введите блюдо или состав" />
-		</div>
-		<div className={styles['product-menu']}>
-			{error && <>{error}</>}
-			{!isLoading && <MenuList products={products} />}
-			{isLoading && <div className={styles['loader-wrapper']}> <div className={styles['loader']} />
-			</div>}
-		</div>
-	</>
+	return (
+		<>
+			<div className={styles['head']}>
+				<Heading>Меню</Heading>
+				<Search placeholder="Введите блюдо или состав" onChange={updateFilter} />
+			</div>
+			<div className={styles['product-menu']}>
+				{error && <>{error}</>}
+				{!isLoading && products.length > 0 && <MenuList products={products} />}
+				{isLoading && (
+					<div className={styles['loader-wrapper']}>
+						<div className={styles['loader']} />
+					</div>
+				)}
+				{!isLoading && products.length === 0 && <>Не найдено блюд по запросу</>}
+			</div>
+		</>
+	);
 }
-
 export default Menu

@@ -6,7 +6,7 @@ import { useDispatch } from 'react-redux';
 import { appDispatch } from '../../store/store';
 import { cartActions } from '../../store/cart.slice';
 
-function ProductCard({ id, title, descr, price, rating, image }: ProductCardProps) {
+function ProductCard({ id, name, descr, price, rating, image }: ProductCardProps) {
 	const dispatch = useDispatch<appDispatch>()
 
 	const add = (e: MouseEvent) => {
@@ -34,7 +34,7 @@ function ProductCard({ id, title, descr, price, rating, image }: ProductCardProp
 					</div>
 				</div>
 				<div className={styles['footer']}>
-					<div className={styles['title']}>{title}</div>
+					<div className={styles['title']}>{name}</div>
 					<div className={styles['descr']}>{descr}</div>
 				</div>
 			</div>
